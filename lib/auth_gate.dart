@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'sample_page.dart'; // 遷移先画面のインポート
+import 'root_page.dart'; // 遷移先画面のインポート
 
 class LoginPage extends StatefulWidget {
   @override
@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
                       password: password,
                     );
                     Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => SamplePage()),
+                      MaterialPageRoute(builder: (context) => RootPage()),
                     );
                   } catch (e) {
                     setState(() {
@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                       password: password,
                     );
                     Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => SamplePage()),
+                      MaterialPageRoute(builder: (context) => RootPage()),
                     );
                   } catch (e) {
                     setState(() {

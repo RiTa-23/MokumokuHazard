@@ -21,7 +21,7 @@ class SamplePage extends StatelessWidget {
         ],
       ),
       body: Center(
-        child: Text('Welcome to the chat!'),
+        child: Text('Welcome to the sample!'),
       ),
     );
   }
