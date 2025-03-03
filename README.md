@@ -41,3 +41,20 @@ d Detach (terminate "flutter run" but leave application running).
 c Clear the screen
 q Quit (terminate the application on the device).
 ```
+
+## commitのルール
+```接頭辞:やったこと```
+### 接頭辞
+- add ... 新機能
+- update ... 修正、変更
+- remove ... 削除
+- wip
+```ex. add:ログイン機能追加```
+
+## ブランチ名のルール
+```接頭辞/担当者/やること```
+### 接頭辞
+- feature ... 機能追加
+- fix ... バグ修正
+```ex.feature/rita/create_login_ui```
+
