@@ -3,6 +3,8 @@ import 'package:mokumou_hazard/map_page.dart';
 import 'package:mokumou_hazard/post_page.dart';
 import 'package:mokumou_hazard/test_page.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'auth_gate.dart';
 
 /// ボトムナビゲーションを実装
 /// 下記ページを切り替えるページ
@@ -49,10 +51,17 @@ class _RootPageState extends State<RootPage> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        actions: const [
-          SignOutButton(
-            variant: ButtonVariant.text,
-          ),
+        actions: [
+          IconButton(
+              icon: Icon(
+                Icons.logout,color: Colors.white,
+              ),
+              onPressed: () async {
+                await FirebaseAuth.instance.signOut();
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+              }),
         ],
       ),
       body: page,
