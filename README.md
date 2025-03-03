@@ -13,7 +13,7 @@
 ## 環境構築
 1. リポジトリをクローン
 ```
-git clone git@github.com/DIGIT-KITAQ-Flutter/MokumokuHazard.git
+git clone https://github.com/DIGIT-KITAQ-Flutter/MokumokuHazard.git
 ```
 1. プロジェクトディレクトリに移動
 ```
@@ -23,6 +23,8 @@ cd mokumoku_hazard
 ```
 flutter pub get
 ```
+3. android/secret.properties追加
+4. lib/env/env.g.dart追加
 
 ## デバッグ
 ```
@@ -39,3 +41,32 @@ d Detach (terminate "flutter run" but leave application running).
 c Clear the screen
 q Quit (terminate the application on the device).
 ```
+
+## commitのルール
+### commit書き方
+```
+接頭辞:やったこと
+```
+### 接頭辞
+- add ... 新機能
+- update ... 修正、変更
+- remove ... 削除
+- wip
+### ex.
+```
+add:ログイン機能追加
+```
+
+## ブランチ名のルール
+### ブランチ名書き方
+```
+接頭辞/担当者/やること
+```
+### 接頭辞
+- feature ... 機能追加
+- fix ... バグ修正
+### ex.
+```
+feature/rita/create_login_ui
+```
+
