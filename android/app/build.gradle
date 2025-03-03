@@ -1,3 +1,11 @@
+def secretProperties = new Properties()
+ def secretPropertiesFile = rootProject.file('secret.properties')
+ if (secretPropertiesFile.exists()) {
+    secretPropertiesFile.withReader('UTF-8') { reader ->
+        secretProperties.load(reader)
+    }
+ }
+
 plugins {
     id "com.android.application"
     // START: FlutterFire Configuration
@@ -31,6 +39,10 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        manifestPlaceholders += [
+           googleMapApiKey: secretProperties.getProperty('googleMap.apiKey'),
+       ]
     }
 
     buildTypes {
