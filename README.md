@@ -23,6 +23,8 @@ cd mokumoku_hazard
 ```
 flutter pub get
 ```
+3. android/secret.properties追加
+4. lib/env/env.g.dart追加
 
 ## デバッグ
 ```
