@@ -43,6 +43,7 @@ q Quit (terminate the application on the device).
 ```
 
 ## commitのルール
+### commit書き方
 ```
 接頭辞:やったこと
 ```
@@ -51,18 +52,21 @@ q Quit (terminate the application on the device).
 - update ... 修正、変更
 - remove ... 削除
 - wip
+### ex.
 ```
-ex. add:ログイン機能追加
+add:ログイン機能追加
 ```
 
 ## ブランチ名のルール
+### ブランチ名書き方
 ```
 接頭辞/担当者/やること
 ```
 ### 接頭辞
 - feature ... 機能追加
 - fix ... バグ修正
+### ex.
 ```
-ex.feature/rita/create_login_ui
+feature/rita/create_login_ui
 ```
 
