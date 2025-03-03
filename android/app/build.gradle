@@ -8,6 +8,14 @@ plugins {
     id "dev.flutter.flutter-gradle-plugin"
 }
 
+def secretProperties = new Properties()
+ def secretPropertiesFile = rootProject.file('secret.properties')
+ if (secretPropertiesFile.exists()) {
+    secretPropertiesFile.withReader('UTF-8') { reader ->
+        secretProperties.load(reader)
+    }
+ }
+
 android {
     namespace = "com.example.mokumou_hazard"
     compileSdk = flutter.compileSdkVersion
@@ -31,6 +39,10 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        manifestPlaceholders += [
+           googleMapApiKey: secretProperties.getProperty('googleMap.apiKey'),
+       ]
     }
 
     buildTypes {
