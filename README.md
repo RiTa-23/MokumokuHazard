@@ -13,7 +13,7 @@
 ## 環境構築
 1. リポジトリをクローン
 ```
-git clone git@github.com/DIGIT-KITAQ-Flutter/MokumokuHazard.git
+git clone https://github.com/DIGIT-KITAQ-Flutter/MokumokuHazard.git
 ```
 1. プロジェクトディレクトリに移動
 ```
