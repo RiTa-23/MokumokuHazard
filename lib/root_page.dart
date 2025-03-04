@@ -78,11 +78,13 @@ class _RootPageState extends State<RootPage> {
         },
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'map'),
           BottomNavigationBarItem(icon: Icon(Icons.post_add), label: 'post'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'),
-          BottomNavigationBarItem(icon: Icon(Icons.data_array), label: 'forTest'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.data_array), label: 'forTest'),
         ],
       ),
     );

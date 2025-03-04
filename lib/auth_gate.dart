@@ -14,6 +14,22 @@ class _LoginPageState extends State<LoginPage> {
   String infoText = '';
 
   @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  void _checkLoginStatus() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // すでにログインしている場合はRootPageに遷移
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => RootPage()),
+      );
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
