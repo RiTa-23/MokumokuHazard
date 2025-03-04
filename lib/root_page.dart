@@ -81,7 +81,8 @@ class _RootPageState extends State<RootPage> {
         unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'map'),
-          BottomNavigationBarItem(icon: Icon(Icons.add_location), label: 'add'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add_location), label: 'marker'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'),
           BottomNavigationBarItem(
               icon: Icon(Icons.data_array), label: 'forTest'),
