@@ -12,7 +12,7 @@ class _TestPageState extends State<TestPage> {
   Widget build(BuildContext context) {
     return const Scaffold(
       body: Center(
-        child: Text('ここで位置情報取得のテスト'),
+        child: Text('ここでDBのテスト'),
       ),
     );
   }
