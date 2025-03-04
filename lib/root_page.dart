@@ -34,7 +34,7 @@ class _RootPageState extends State<RootPage> {
         break;
       case 1:
         page = const PostPage();
-        appBarTitle = 'Post Page';
+        appBarTitle = 'Marker Page';
         break;
       case 2:
         page = const ProfilePage();
@@ -81,7 +81,7 @@ class _RootPageState extends State<RootPage> {
         unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'map'),
-          BottomNavigationBarItem(icon: Icon(Icons.post_add), label: 'post'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_location), label: 'add'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'),
           BottomNavigationBarItem(
               icon: Icon(Icons.data_array), label: 'forTest'),
