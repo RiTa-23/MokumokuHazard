@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mokumou_hazard/map_page.dart';
 import 'package:mokumou_hazard/post_page.dart';
 import 'package:mokumou_hazard/test_page.dart';
-import 'package:firebase_ui_auth/firebase_ui_auth.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mokumou_hazard/profile_page.dart';
 import 'auth_gate.dart';
 
 /// ボトムナビゲーションを実装
 /// 下記ページを切り替えるページ
 /// - マップページ
 /// - マーカー作成
-/// - プロフィールページ
+/// - プロフィールページ（設置したマーカー一覧）
+/// - テスト用ページ
 
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
@@ -33,8 +34,11 @@ class _RootPageState extends State<RootPage> {
         break;
       case 1:
         page = const PostPage();
-        appBarTitle = 'Post Page';
+        appBarTitle = 'Marker Page';
         break;
+      case 2:
+        page = const ProfilePage();
+        appBarTitle = 'Profile Page';
       default:
         page = const TestPage();
         appBarTitle = 'Test Page';
@@ -54,7 +58,8 @@ class _RootPageState extends State<RootPage> {
         actions: [
           IconButton(
               icon: Icon(
-                Icons.logout,color: Colors.white,
+                Icons.logout,
+                color: Colors.white,
               ),
               onPressed: () async {
                 await FirebaseAuth.instance.signOut();
@@ -73,9 +78,12 @@ class _RootPageState extends State<RootPage> {
         },
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
+        unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'map'),
-          BottomNavigationBarItem(icon: Icon(Icons.post_add), label: 'post'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.add_location), label: 'marker'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'),
           BottomNavigationBarItem(
               icon: Icon(Icons.data_array), label: 'forTest'),
         ],

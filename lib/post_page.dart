@@ -11,7 +11,7 @@ class _PostPageState extends State<PostPage> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Center(child: Text('ここに投稿画面を作成する')),
+      body: Center(child: Text('ここにマーカー作成画面を作成する')),
     );
   }
 }
