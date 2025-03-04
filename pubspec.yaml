@@ -39,6 +39,7 @@ dependencies:
   firebase_ui_auth: ^1.16.1
   google_maps_flutter: ^2.10.1
   envied: ^1.1.1
+  cloud_firestore: ^5.6.5
 
 dev_dependencies:
   flutter_test:
