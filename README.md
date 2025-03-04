@@ -1,4 +1,6 @@
 # もくもくハザード
+[Notion_もくもくハザード](https://ionized-kiwi-2bf.notion.site/1ac9283b1c15808aab06ebcc723b544d)
+> ↑のNotionに大体の環境構築、参考資料等、情報まとめてます
 ## 概要
 ### プロダクト概要
 課題：北九州はスモーカーが多い→もくもく（副流煙）を避けたい！  
@@ -69,4 +71,8 @@ add:ログイン機能追加
 ```
 feature/rita/create_login_ui
 ```
+## 参考資料まとめ
+https://ionized-kiwi-2bf.notion.site/1ac9283b1c15800c9cd1d078527d2ae3
 
+## トラブルと解決方法
+https://www.notion.so/1ac9283b1c1580828673e2c21d7f16bd
