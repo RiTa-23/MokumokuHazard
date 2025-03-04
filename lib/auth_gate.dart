@@ -9,6 +9,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isLogin = true;
+  bool _isLoading = false; // 追加: ローディング状態を管理
   String email = '';
   String password = '';
   String infoText = '';
@@ -24,6 +25,13 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Image.asset(
+              'assets/logo.jpg', // 画像のパス
+              width: 150, // 幅を指定
+              height: 150, // 高さを指定
+            ),
+            SizedBox(height: 20),
+
             TextField(
               decoration: InputDecoration(labelText: 'Email'),
               onChanged: (value) {
@@ -42,48 +50,23 @@ class _LoginPageState extends State<LoginPage> {
               },
             ),
             SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                if (_isLogin) {
-                  // ログイン処理
-                  try {
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: email,
-                      password: password,
-                    );
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => RootPage()),
-                    );
-                  } catch (e) {
-                    setState(() {
-                      infoText = 'ログインに失敗しました: ${e.toString()}';
-                    });
-                  }
-                } else {
-                  // アカウント登録処理
-                  try {
-                    await FirebaseAuth.instance.createUserWithEmailAndPassword(
-                      email: email,
-                      password: password,
-                    );
-                    Navigator.of(context).pushReplacement(
-                      MaterialPageRoute(builder: (context) => RootPage()),
-                    );
-                  } catch (e) {
-                    setState(() {
-                      infoText = '登録に失敗しました: ${e.toString()}';
-                    });
-                  }
-                }
-              },
-              child: Text(_isLogin ? 'Login' : 'Register'),
-            ),
+
+            // ローディング中ならインジケーターを表示
+            _isLoading
+                ? CircularProgressIndicator() // ローディングアニメーション
+                : ElevatedButton(
+                    onPressed: _isLoading ? null : _handleAuth, // ログイン処理
+                    child: Text(_isLogin ? 'Login' : 'Register'),
+                  ),
+
             TextButton(
-              onPressed: () {
-                setState(() {
-                  _isLogin = !_isLogin;
-                });
-              },
+              onPressed: _isLoading
+                  ? null
+                  : () {
+                      setState(() {
+                        _isLogin = !_isLogin;
+                      });
+                    },
               child: Text(_isLogin
                   ? 'Create an account'
                   : 'Already have an account? Login'),
@@ -94,4 +77,43 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
   }
+
+  // ログイン / 登録処理
+  Future<void> _handleAuth() async {
+    setState(() {
+      _isLoading = true; // ローディング開始
+      infoText = ''; // メッセージをリセット
+    });
+
+    try {
+      if (_isLogin) {
+        // ログイン処理
+        await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+      } else {
+        // アカウント登録処理
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+      }
+
+      // 成功時: 画面遷移
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (context) => RootPage()),
+      );
+    } catch (e) {
+      // エラー時: メッセージを表示
+      setState(() {
+        infoText = 'エラー: ${e.toString()}';
+      });
+    } finally {
+      setState(() {
+        _isLoading = false; // ローディング終了
+      });
+    }
+  }
 }
+
