@@ -17,86 +17,113 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(_isLogin ? 'ログイン' : 'Register'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Stack(
-    
-      alignment: Alignment.topCenter, // テキストを画像の上部に配置
-      children: [
-        Image.asset(
-          'assets/logo.png', // 画像のパス
-          width: 150, // 幅を指定
-          height: 150, // 高さを指定
-        ),
-        Positioned(
-          top:1, // 上部に配置（適宜調整）
-          child: Text(
-            'もくもくハザード', // 表示するテキスト
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-              color: const Color.fromARGB(255, 173, 73, 31), // 文字色
-              shadows: [
-                Shadow(
-                  blurRadius: 5.0,
-                  color: Colors.black, // 影の色
-                  offset: Offset(2, 2),
+      backgroundColor: Colors.blue[100], // 背景色
+      body: Center(
+        child: Card(
+          elevation: 8, // 影の強さ
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15), // 角を丸くする
+          ),
+          margin: EdgeInsets.symmetric(horizontal: 20), // 余白
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min, // 必要最小限の高さ
+              children: [
+                Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    Column(
+                      children: [
+                        Image.asset(
+                          'assets/logo.png',
+                          width: 100,
+                          height: 100,
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'もくもくハザード',
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(255, 173, 73, 31),
+                            //shadows: [
+                              //Shadow(
+                                //blurRadius: 5.0,
+                                //color: Colors.black,
+                                //offset: Offset(2, 2),
+                              //),
+                            //],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
+                SizedBox(height: 20),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(), // 枠線を追加
+                  ),
+                  onChanged: (value) {
+                    setState(() {
+                      email = value;
+                    });
+                  },
+                ),
+                SizedBox(height: 10),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                  ),
+                  obscureText: true,
+                  onChanged: (value) {
+                    setState(() {
+                      password = value;
+                    });
+                  },
+                ),
+                SizedBox(height: 20),
+                _isLoading
+                    ? CircularProgressIndicator() // ローディングアニメーション
+                    : ElevatedButton(
+                        onPressed: _isLoading ? null : _handleAuth,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blue, // ボタン色
+                          minimumSize: Size(250, 50),//loginボタンのサイズ
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          textStyle: TextStyle(fontSize: 18),
+                        ),
+                       child: Text(
+    _isLogin ? 'Login' : 'Register',
+    style: TextStyle(color: const Color.fromARGB(255, 249, 249, 249)), // loginの文字色
+  ),
+),
+                TextButton(
+                  onPressed: _isLoading
+                      ? null
+                      : () {
+                          setState(() {
+                            _isLogin = !_isLogin;
+                          });
+                        },
+                  child: Text(
+                    _isLogin ? 'Create an account' : 'Already have an account? Login',
+                  ),
+                ),
+                if (infoText.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: Text(
+                      infoText,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
               ],
             ),
           ),
-        ),
-      ],
-    ),
-    SizedBox(height: 20),
-
-            TextField(
-              decoration: InputDecoration(labelText: 'Email'),
-              onChanged: (value) {
-                setState(() {
-                  email = value;
-                });
-              },
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Password'),
-              obscureText: true,
-              onChanged: (value) {
-                setState(() {
-                  password = value;
-                });
-              },
-            ),
-            SizedBox(height: 20),
-
-            // ローディング中ならインジケーターを表示
-            _isLoading
-                ? CircularProgressIndicator() // ローディングアニメーション
-                : ElevatedButton(
-                    onPressed: _isLoading ? null : _handleAuth, // ログイン処理
-                    child: Text(_isLogin ? 'ログイン' : 'Register'),
-                  ),
-
-            TextButton(
-              onPressed: _isLoading
-                  ? null
-                  : () {
-                      setState(() {
-                        _isLogin = !_isLogin;
-                      });
-                    },
-              child: Text(_isLogin
-                  ? 'Create an account'
-                  : 'Already have an account? Login'),
-            ),
-            Text(infoText),
-          ],
         ),
       ),
     );
