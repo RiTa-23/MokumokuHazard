@@ -10,11 +10,77 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-// マップビューの初期位置
+  // マップビューの初期位置（北九州に設定）
   CameraPosition _initialLocation =
-      CameraPosition(target: LatLng(0.0, 0.0)); // 追加
+      CameraPosition(target: LatLng(33.881918764227144, 130.87829735395513));
   // マップの表示制御用
-  late GoogleMapController mapController; // 追加
+  late GoogleMapController mapController;
+  // 現在位置の記憶用
+  late Position _currentPosition;
+  // 現在位置のテキスト表示用
+  String _currentAddress = '現在位置を取得中...';
+
+  // 現在位置の取得方法
+  Future<void> _getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // 位置情報サービスが有効かどうかを確認
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      // 位置情報サービスが無効の場合、エラーメッセージを表示
+      print('位置情報サービスが無効です。');
+      return;
+    }
+
+    // 位置情報の権限をリクエスト
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        // 位置情報の権限が拒否された場合、エラーメッセージを表示
+        print('位置情報の権限が拒否されました。');
+        return;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      // 位置情報の権限が永久に拒否された場合、エラーメッセージを表示
+      print('位置情報の権限が永久に拒否されました。');
+      return;
+    }
+
+    // 位置情報を取得
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    if (mounted) {
+      setState(() {
+        // 位置を変数に格納する
+        _currentPosition = position;
+
+        print('CURRENT POS: $_currentPosition');
+
+        // カメラを現在位置に移動させる場合
+        mapController.animateCamera(
+          CameraUpdate.newCameraPosition(
+            CameraPosition(
+              target: LatLng(position.latitude, position.longitude),
+              zoom: 18.0,
+            ),
+          ),
+        );
+
+        // 現在位置のテキストを更新
+        _currentAddress = '緯度: ${position.latitude}, 経度: ${position.longitude}';
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +105,6 @@ class _MapPageState extends State<MapPage> {
                 mapController = controller;
               },
             ),
-
             // ここからボタンを表示するためのコードを追加
             // ズームイン・ズームアウトのボタンを配置
             SafeArea(
@@ -70,7 +135,7 @@ class _MapPageState extends State<MapPage> {
                         ),
                       ),
                       SizedBox(height: 20),
-                      //　ズームアウトボタン
+                      // ズームアウトボタン
                       ClipOval(
                         child: Material(
                           color: Colors.blue.shade100, // ボタンを押す前のカラー
@@ -111,19 +176,25 @@ class _MapPageState extends State<MapPage> {
                           child: Icon(Icons.my_location),
                         ),
                         onTap: () {
-                          mapController.animateCamera(
-                            CameraUpdate.newCameraPosition(
-                              CameraPosition(
-                                target: LatLng(
-                                    35.65872865514525, // 仮の緯度。後で変更
-                                    139.74543290592266 // 仮の経度。後で変更
-                                    ),
-                                zoom: 18.0,
-                              ),
-                            ),
-                          );
+                          _getCurrentLocation();
                         },
                       ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // 現在地のテキスト表示
+            SafeArea(
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Container(
+                    color: Colors.white,
+                    child: Text(
+                      _currentAddress,
+                      style: TextStyle(fontSize: 16.0),
                     ),
                   ),
                 ),
