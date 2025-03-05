@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/logo.jpg', // 画像のパス
+              'assets/logo.png', // 画像のパス
               width: 150, // 幅を指定
               height: 150, // 高さを指定
             ),
