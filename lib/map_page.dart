@@ -12,8 +12,8 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   // マップビューの初期位置（北九州に設定）
-  CameraPosition _initialLocation =
-      CameraPosition(target: LatLng(33.881918764227144, 130.87829735395513));
+  CameraPosition _initialLocation = CameraPosition(
+      target: LatLng(33.881918764227144, 130.87829735395513), zoom: 10.0);
   // マップの表示制御用
   late GoogleMapController mapController;
   // 現在位置の記憶用
@@ -23,6 +23,7 @@ class _MapPageState extends State<MapPage> {
   // コンパスのデータ
   double _direction = 0.0;
 
+  // 現在位置を表示するメソッド
   Future<void> _displayCurrentLocation() async {
     mapController.animateCamera(
       CameraUpdate.newCameraPosition(
@@ -32,6 +33,7 @@ class _MapPageState extends State<MapPage> {
             _currentPosition.longitude,
           ),
           zoom: 18.0,
+          bearing: _direction,
         ),
       ),
     );
