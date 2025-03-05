@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter_compass/flutter_compass.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -19,6 +20,22 @@ class _MapPageState extends State<MapPage> {
   late Position _currentPosition;
   // 現在位置のテキスト表示用
   String _currentAddress = '現在位置を取得中...';
+  // コンパスのデータ
+  double _direction = 0.0;
+
+  Future<void> _displayCurrentLocation() async {
+    mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(
+            _currentPosition.latitude,
+            _currentPosition.longitude,
+          ),
+          zoom: 18.0,
+        ),
+      ),
+    );
+  }
 
   // 現在位置の取得方法
   Future<void> _getCurrentLocation() async {
@@ -61,14 +78,7 @@ class _MapPageState extends State<MapPage> {
         print('CURRENT POS: $_currentPosition');
 
         // カメラを現在位置に移動させる場合
-        mapController.animateCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: LatLng(position.latitude, position.longitude),
-              zoom: 18.0,
-            ),
-          ),
-        );
+        _displayCurrentLocation();
 
         // 現在位置のテキストを更新
         _currentAddress = '緯度: ${position.latitude}, 経度: ${position.longitude}';
@@ -80,6 +90,15 @@ class _MapPageState extends State<MapPage> {
   void initState() {
     super.initState();
     _getCurrentLocation();
+
+    // コンパスのデータを取得
+    FlutterCompass.events!.listen((event) {
+      if (mounted) {
+        setState(() {
+          _direction = event.heading!;
+        });
+      }
+    });
   }
 
   @override
@@ -176,7 +195,7 @@ class _MapPageState extends State<MapPage> {
                           child: Icon(Icons.my_location),
                         ),
                         onTap: () {
-                          _getCurrentLocation();
+                          _displayCurrentLocation();
                         },
                       ),
                     ),
@@ -188,13 +207,22 @@ class _MapPageState extends State<MapPage> {
             SafeArea(
               child: Align(
                 alignment: Alignment.topCenter,
-                child: Padding(
+                child: Container(
                   padding: const EdgeInsets.all(10.0),
                   child: Container(
+                    height: 60.0,
                     color: Colors.white,
-                    child: Text(
-                      _currentAddress,
-                      style: TextStyle(fontSize: 16.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          _currentAddress,
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                        Text(
+                          '方向: $_direction°',
+                          style: TextStyle(fontSize: 16.0),
+                        ),
+                      ],
                     ),
                   ),
                 ),
