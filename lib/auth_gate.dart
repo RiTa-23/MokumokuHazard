@@ -25,12 +25,35 @@ class _LoginPageState extends State<LoginPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/logo.png', // 画像のパス
-              width: 150, // 幅を指定
-              height: 150, // 高さを指定
+            Stack(
+      alignment: Alignment.topCenter, // テキストを画像の上部に配置
+      children: [
+        Image.asset(
+          'assets/logo.png', // 画像のパス
+          width: 150, // 幅を指定
+          height: 150, // 高さを指定
+        ),
+        Positioned(
+          top:1, // 上部に配置（適宜調整）
+          child: Text(
+            'もくもくハザード', // 表示するテキスト
+            style: TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.bold,
+              color: const Color.fromARGB(255, 173, 73, 31), // 文字色
+              shadows: [
+                Shadow(
+                  blurRadius: 5.0,
+                  color: Colors.black, // 影の色
+                  offset: Offset(2, 2),
+                ),
+              ],
             ),
-            SizedBox(height: 20),
+          ),
+        ),
+      ],
+    ),
+    SizedBox(height: 20),
 
             TextField(
               decoration: InputDecoration(labelText: 'Email'),
