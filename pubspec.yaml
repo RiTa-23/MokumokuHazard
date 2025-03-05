@@ -38,6 +38,7 @@ dependencies:
   firebase_auth: ^5.5.1
   firebase_ui_auth: ^1.16.1
   google_maps_flutter: ^2.10.1
+  geolocator: ^9.0.0
   envied: ^1.1.1
 
 dev_dependencies:
