@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isLogin ? 'Login' : 'Register'),
+        title: Text(_isLogin ? 'ログイン' : 'Register'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -26,6 +26,7 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Stack(
+    
       alignment: Alignment.topCenter, // テキストを画像の上部に配置
       children: [
         Image.asset(
@@ -79,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                 ? CircularProgressIndicator() // ローディングアニメーション
                 : ElevatedButton(
                     onPressed: _isLoading ? null : _handleAuth, // ログイン処理
-                    child: Text(_isLogin ? 'Login' : 'Register'),
+                    child: Text(_isLogin ? 'ログイン' : 'Register'),
                   ),
 
             TextButton(
