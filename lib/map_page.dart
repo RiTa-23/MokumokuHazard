@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_compass/flutter_compass.dart';
+import 'package:provider/provider.dart';
+import 'package:mokumou_hazard/view_model/smoking_area_view_model.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -115,15 +117,20 @@ class _MapPageState extends State<MapPage> {
       child: Scaffold(
         body: Stack(
           children: <Widget>[
-            GoogleMap(
-              initialCameraPosition: _initialLocation,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: false,
-              mapType: MapType.normal,
-              zoomGesturesEnabled: true,
-              zoomControlsEnabled: false,
-              onMapCreated: (GoogleMapController controller) {
-                mapController = controller;
+            Consumer<SmokingAreaViewModel>(
+              builder: (context, viewModel, child) {
+                return GoogleMap(
+                  initialCameraPosition: _initialLocation,
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: false,
+                  mapType: MapType.normal,
+                  zoomGesturesEnabled: true,
+                  zoomControlsEnabled: false,
+                  markers: viewModel.markers,
+                  onMapCreated: (GoogleMapController controller) {
+                    mapController = controller;
+                  },
+                );
               },
             ),
             // ここからボタンを表示するためのコードを追加
