@@ -20,27 +20,42 @@ class MarkerViewModel extends ChangeNotifier {
 
   /// Firestore からそれぞれのデータを取得し、両方の情報から Marker と Circle を作成する
   Future<void> loadAllMarkers() async {
+    // カスタムアイコンの読み込み
+    BitmapDescriptor customIcon = await BitmapDescriptor.fromAssetImage(
+      ImageConfiguration(),
+      'assets/icon.png',
+    );
+
     await smokingAreaListModel.getSmokingAreas();
-    print("取得したマーカーの数: ${smokingAreaListModel.smokingAreas.length}");
-    _markers = smokingAreaListModel.smokingAreas.map((area) {
+    var _smoking_markers = smokingAreaListModel.smokingAreas.map((area) {
       return Marker(
         markerId: MarkerId(area.name),
         position: LatLng(area.latitude, area.longitude),
         infoWindow: InfoWindow(title: area.name),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
       );
     }).toSet();
 
     await markerListModel.getMarkers();
-    print("取得したマーカーの数: ${markerListModel.markers.length}");
+    var _circle_markers = markerListModel.markers.map((mModel) {
+      return Marker(
+        markerId: MarkerId(mModel.user_id),
+        position: LatLng(mModel.latitude, mModel.longitude),
+        infoWindow: InfoWindow(title: mModel.user_id),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+      );
+    }).toSet();
     _circles = markerListModel.markers.map((mModel) {
       return Circle(
         circleId: CircleId(mModel.user_id),
         center: LatLng(mModel.latitude, mModel.longitude),
         radius: mModel.radius, // m 単位で指定
-        fillColor: Colors.red.withOpacity(0.7),
+        fillColor: Colors.red.withOpacity(mModel.risk_level / 5.0 * 0.8),
         strokeWidth: 1,
       );
     }).toSet();
+
+    _markers = _smoking_markers.union(_circle_markers);
 
     // //独自マーカーから Marker および Circle を生成
     // Set<Marker> customMarkers = markerListModel.markers.map((mModel) {
