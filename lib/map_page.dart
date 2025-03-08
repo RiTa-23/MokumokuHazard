@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:provider/provider.dart';
 import 'package:mokumou_hazard/view_model/marker_view_model.dart';
+import 'package:mokumou_hazard/alert_page.dart'; //遷移先
+import 'package:mokumou_hazard/utils/location_checker.dart'; //アラートチェック;
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -79,8 +82,6 @@ class _MapPageState extends State<MapPage> {
         // 位置を変数に格納する
         _currentPosition = position;
 
-        print('CURRENT POS: $_currentPosition');
-
         // カメラを現在位置に移動させる場合
         _displayCurrentLocation();
 
@@ -93,7 +94,11 @@ class _MapPageState extends State<MapPage> {
   @override
   void initState() {
     super.initState();
-    _getCurrentLocation();
+    _checkCurrentLocation();
+
+    Timer.periodic(Duration(seconds: 2), (timer) {
+      _checkCurrentLocation();
+    });
 
     // コンパスのデータを取得
     FlutterCompass.events!.listen((event) {
@@ -103,6 +108,34 @@ class _MapPageState extends State<MapPage> {
         });
       }
     });
+  }
+
+  /// **現在地を取得し、サークル内か判定**
+  Future<void> _checkCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    setState(() {
+      _currentPosition = position;
+    });
+
+    _checkLocation(position);
+  }
+
+  /// **サークル内に入ったか判定**
+  void _checkLocation(Position position) {
+    final markerVM = Provider.of<MarkerViewModel>(context, listen: false);
+    if (LocationChecker.isInsideCircle(position, markerVM.circles)) {
+      _navigateToNextPage();
+    }
+  }
+
+  /// **画面遷移**
+  void _navigateToNextPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AlertPage()),
+    );
   }
 
   @override
