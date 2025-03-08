@@ -77,6 +77,7 @@ class _TestPageState extends State<TestPage> {
           ),
           // ドキュメントの情報を表示
           ListTile(title: Text(orderDocumentInfo)),
+          
         ],
       )),
     );
