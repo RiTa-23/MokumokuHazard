@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:mokumou_hazard/alert_page.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({super.key});
@@ -77,7 +78,15 @@ class _TestPageState extends State<TestPage> {
           ),
           // ドキュメントの情報を表示
           ListTile(title: Text(orderDocumentInfo)),
-          
+          //Alert画面に遷移するボタン
+          ElevatedButton(
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => AlertPage()),
+              );
+            },
+            child: Text('Alert画面に遷移'),
+          ),
         ],
       )),
     );

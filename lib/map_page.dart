@@ -15,7 +15,7 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   // マップビューの初期位置（北九州に設定）
   CameraPosition _initialLocation = CameraPosition(
-      target: LatLng(33.881918764227144, 130.87829735395513), zoom: 10.0);
+      target: LatLng(33.881918764227144, 130.87829735395513), zoom: 15.0);
   // マップの表示制御用
   late GoogleMapController mapController;
   // 現在位置の記憶用
@@ -205,7 +205,7 @@ class _MapPageState extends State<MapPage> {
                           child: Icon(Icons.my_location),
                         ),
                         onTap: () {
-                          _displayCurrentLocation();
+                          _getCurrentLocation();
                         },
                       ),
                     ),
