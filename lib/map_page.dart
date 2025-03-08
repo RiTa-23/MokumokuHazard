@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:provider/provider.dart';
-import 'package:mokumou_hazard/view_model/smoking_area_view_model.dart';
+import 'package:mokumou_hazard/view_model/marker_view_model.dart';
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -117,8 +117,8 @@ class _MapPageState extends State<MapPage> {
       child: Scaffold(
         body: Stack(
           children: <Widget>[
-            Consumer<SmokingAreaViewModel>(
-              builder: (context, viewModel, child) {
+            Consumer<MarkerViewModel>(
+              builder: (context, markerVM, child) {
                 return GoogleMap(
                   initialCameraPosition: _initialLocation,
                   myLocationEnabled: true,
@@ -126,7 +126,8 @@ class _MapPageState extends State<MapPage> {
                   mapType: MapType.normal,
                   zoomGesturesEnabled: true,
                   zoomControlsEnabled: false,
-                  markers: viewModel.markers,
+                  markers: markerVM.markers,
+                  circles: markerVM.circles,
                   onMapCreated: (GoogleMapController controller) {
                     mapController = controller;
                   },
