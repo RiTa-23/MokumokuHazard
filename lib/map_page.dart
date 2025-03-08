@@ -28,22 +28,6 @@ class _MapPageState extends State<MapPage> {
   // コンパスのデータ
   double _direction = 0.0;
 
-  // 現在位置を表示するメソッド
-  Future<void> _displayCurrentLocation() async {
-    mapController.animateCamera(
-      CameraUpdate.newCameraPosition(
-        CameraPosition(
-          target: LatLng(
-            _currentPosition.latitude,
-            _currentPosition.longitude,
-          ),
-          zoom: 18.0,
-          bearing: _direction,
-        ),
-      ),
-    );
-  }
-
   // 現在位置の取得方法
   Future<void> _getCurrentLocation() async {
     bool serviceEnabled;
@@ -91,10 +75,26 @@ class _MapPageState extends State<MapPage> {
     }
   }
 
+  // 現在位置を表示するメソッド
+  Future<void> _displayCurrentLocation() async {
+    mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(
+            _currentPosition.latitude,
+            _currentPosition.longitude,
+          ),
+          zoom: 18.0,
+          bearing: _direction,
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    _checkCurrentLocation();
+    _getCurrentLocation();
 
     Timer.periodic(Duration(seconds: 2), (timer) {
       _checkCurrentLocation();
