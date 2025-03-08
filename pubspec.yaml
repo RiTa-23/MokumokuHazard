@@ -40,6 +40,7 @@ dependencies:
   google_maps_flutter: ^2.10.1
   envied: ^1.1.1
   cloud_firestore: ^5.6.5
+  shared_preferences: ^2.0.16 
 
 dev_dependencies:
   flutter_test:
@@ -64,6 +65,11 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  assets:
+    - assets/background1.jpg
+    - assets/background2.jpg
+    - assets/background3.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:
