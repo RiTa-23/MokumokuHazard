@@ -51,6 +51,7 @@ class MarkerViewModel extends ChangeNotifier {
         center: LatLng(mModel.latitude, mModel.longitude),
         radius: mModel.radius, // m 単位で指定
         fillColor: Colors.red.withOpacity(mModel.risk_level / 5.0 * 0.8),
+        strokeColor: Colors.red,
         strokeWidth: 1,
       );
     }).toSet();
