@@ -75,7 +75,7 @@ class _PostPageState extends State<PostPage> {
                       children: [
                         // 場所の名前を入力するフィールド
                         TextField(
-                          decoration: InputDecoration(labelText: '場所の名前'),
+                          decoration: InputDecoration(labelText: '場所の説明'),
                           onChanged: (value) {
                             setState(() {
                               locationName = value;
