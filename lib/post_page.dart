@@ -7,7 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:mokumou_hazard/view_model/post_view_model.dart';
 
 class PostPage extends StatefulWidget {
-  const PostPage({super.key});
+  final VoidCallback onMarkerCreated;
+  const PostPage({super.key, required this.onMarkerCreated});
 
   @override
   State<PostPage> createState() => _PostPageState();
@@ -181,7 +182,10 @@ class _PostPageState extends State<PostPage> {
                               ),
                               // 作成ボタン
                               ElevatedButton(
-                                onPressed: () => postVM.saveMarker(context),
+                                onPressed: () {
+                                  postVM.saveMarker(
+                                      context, widget.onMarkerCreated);
+                                },
                                 child: Text('作成'),
                               ),
                             ],

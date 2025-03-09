@@ -10,7 +10,7 @@ class PostViewModel extends ChangeNotifier {
   String locationName = '';
 
   // Firestoreにデータを格納するメソッド
-  Future<void> saveMarker(BuildContext context) async {
+  Future<void> saveMarker(BuildContext context,VoidCallback onSuccess) async {
     if (selectedLocation != null && locationName.isNotEmpty) {
       final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
@@ -25,6 +25,7 @@ class PostViewModel extends ChangeNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('マーカーが作成されました')),
         );
+        onSuccess();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('ユーザーがログインしていません')),

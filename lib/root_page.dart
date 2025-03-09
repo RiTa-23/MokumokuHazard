@@ -23,6 +23,12 @@ class RootPage extends StatefulWidget {
 class _RootPageState extends State<RootPage> {
   int _selectedIndex = 0;
 
+  void togglePage() {
+    setState(() {
+      _selectedIndex = 0; // マップページに遷移
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget page;
@@ -33,7 +39,7 @@ class _RootPageState extends State<RootPage> {
         appBarTitle = 'Map Page';
         break;
       case 1:
-        page = const PostPage();
+        page = PostPage(onMarkerCreated: togglePage);
         appBarTitle = 'Marker Page';
         break;
       case 2:
