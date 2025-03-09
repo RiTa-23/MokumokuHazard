@@ -41,7 +41,7 @@ class MarkerViewModel extends ChangeNotifier {
       return Marker(
         markerId: MarkerId(mModel.id),
         position: LatLng(mModel.latitude, mModel.longitude),
-        infoWindow: InfoWindow(title: mModel.user_id),
+        infoWindow: InfoWindow(title: mModel.name),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
       );
     }).toSet();
