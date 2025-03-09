@@ -126,10 +126,10 @@ class _MapPageState extends State<MapPage> {
                 return GoogleMap(
                   initialCameraPosition: _initialLocation,
                   myLocationEnabled: true,
-                  myLocationButtonEnabled: true,
+                  myLocationButtonEnabled: false,
                   mapType: MapType.normal,
                   zoomGesturesEnabled: true,
-                  zoomControlsEnabled: true,
+                  zoomControlsEnabled: false,
                   markers: markerVM.markers,
                   circles: markerVM.circles,
                   onMapCreated: (GoogleMapController controller) {
@@ -217,31 +217,31 @@ class _MapPageState extends State<MapPage> {
                 ),
               ),
             ),
-            // 現在地のテキスト表示
-            SafeArea(
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    height: 60.0,
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        Text(
-                          _currentAddress,
-                          style: TextStyle(fontSize: 16.0),
-                        ),
-                        Text(
-                          '方向: $_direction°',
-                          style: TextStyle(fontSize: 16.0),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // // 現在地のテキスト表示
+            // SafeArea(
+            //   child: Align(
+            //     alignment: Alignment.topCenter,
+            //     child: Container(
+            //       padding: const EdgeInsets.all(10.0),
+            //       child: Container(
+            //         height: 60.0,
+            //         color: Colors.white,
+            //         child: Column(
+            //           children: [
+            //             Text(
+            //               _currentAddress,
+            //               style: TextStyle(fontSize: 16.0),
+            //             ),
+            //             Text(
+            //               '方向: $_direction°',
+            //               style: TextStyle(fontSize: 16.0),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
