@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_compass/flutter_compass.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:mokumou_hazard/utils/get_current_location.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage({super.key});
@@ -11,11 +14,61 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
   late GoogleMapController mapController;
   LatLng? selectedLocation;
-  double radius = 100.0;
+  double radius = 50.0;
   double riskLevel = 1.0;
   String locationName = '';
 
+  // 現在位置の記憶用
+  late Position _currentPosition;
+  // コンパスのデータ
+  double _direction = 0.0;
+
+  // 現在位置を表示するメソッド
+  Future<void> _displayCurrentLocation() async {
+    mapController.animateCamera(
+      CameraUpdate.newCameraPosition(
+        CameraPosition(
+          target: LatLng(
+            _currentPosition.latitude,
+            _currentPosition.longitude,
+          ),
+          zoom: 18.0,
+          bearing: _direction,
+        ),
+      ),
+    );
+  }
+
+  // 現在位置の取得方法
+  Future<void> _getCurrentLocation() async {
+    Position? position = await getCurrentLocation(context);
+    if (position != null && mounted) {
+      setState(() {
+        // 位置を変数に格納する
+        _currentPosition = position;
+
+        // カメラを現在位置に移動させる
+        _displayCurrentLocation();
+      });
+    }
+  }
+
   @override
+  void initState() {
+    super.initState();
+    //現在地を取得
+    _getCurrentLocation();
+
+    // コンパスのデータを取得
+    FlutterCompass.events!.listen((event) {
+      if (mounted) {
+        setState(() {
+          _direction = event.heading!;
+        });
+      }
+    });
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
@@ -24,8 +77,11 @@ class _PostPageState extends State<PostPage> {
           Expanded(
             flex: 2,
             child: GoogleMap(
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
               initialCameraPosition: CameraPosition(
-                target: LatLng(33.5902, 130.4028), // 初期位置を福岡市役所前広場に設定
+                target: LatLng(
+                    33.881918764227144, 130.87829735395513), // 初期位置を福岡市役所前広場に設定
                 zoom: 14.0,
               ),
               onMapCreated: (controller) {
@@ -89,8 +145,8 @@ class _PostPageState extends State<PostPage> {
                             Expanded(
                               child: Slider(
                                 value: radius,
-                                min: 10.0,
-                                max: 1000.0,
+                                min: 5.0,
+                                max: 100.0,
                                 divisions: 100,
                                 label: radius.toStringAsFixed(0),
                                 onChanged: (value) {

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:mokumou_hazard/view_model/marker_view_model.dart';
 import 'package:mokumou_hazard/alert_page.dart'; //遷移先
 import 'package:mokumou_hazard/utils/location_checker.dart'; //アラートチェック;
+import 'package:mokumou_hazard/utils/get_current_location.dart'; //現在地取得
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -16,9 +17,9 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  // マップビューの初期位置（北九州に設定）
-  CameraPosition _initialLocation = CameraPosition(
-      target: LatLng(33.881918764227144, 130.87829735395513), zoom: 15.0);
+  // マップビューの初期位置
+  CameraPosition _initialLocation =
+      CameraPosition(target: LatLng(33.5902, 130.4028), zoom: 14.0);
   // マップの表示制御用
   late GoogleMapController mapController;
   // 現在位置の記憶用
@@ -27,53 +28,6 @@ class _MapPageState extends State<MapPage> {
   String _currentAddress = '現在位置を取得中...';
   // コンパスのデータ
   double _direction = 0.0;
-
-  // 現在位置の取得方法
-  Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // 位置情報サービスが有効かどうかを確認
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // 位置情報サービスが無効の場合、エラーメッセージを表示
-      print('位置情報サービスが無効です。');
-      return;
-    }
-
-    // 位置情報の権限をリクエスト
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // 位置情報の権限が拒否された場合、エラーメッセージを表示
-        print('位置情報の権限が拒否されました。');
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // 位置情報の権限が永久に拒否された場合、エラーメッセージを表示
-      print('位置情報の権限が永久に拒否されました。');
-      return;
-    }
-
-    // 位置情報を取得
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    if (mounted) {
-      setState(() {
-        // 位置を変数に格納する
-        _currentPosition = position;
-
-        // カメラを現在位置に移動させる場合
-        _displayCurrentLocation();
-
-        // 現在位置のテキストを更新
-        _currentAddress = '緯度: ${position.latitude}, 経度: ${position.longitude}';
-      });
-    }
-  }
 
   // 現在位置を表示するメソッド
   Future<void> _displayCurrentLocation() async {
@@ -89,6 +43,23 @@ class _MapPageState extends State<MapPage> {
         ),
       ),
     );
+  }
+
+  // 現在位置の取得方法
+  Future<void> _getCurrentLocation() async {
+    Position? position = await getCurrentLocation(context);
+    if (position != null && mounted) {
+      setState(() {
+        // 位置を変数に格納する
+        _currentPosition = position;
+
+        // カメラを現在位置に移動させる場合
+        _displayCurrentLocation();
+
+        // 現在位置のテキストを更新
+        _currentAddress = '緯度: ${position.latitude}, 経度: ${position.longitude}';
+      });
+    }
   }
 
   @override
@@ -155,10 +126,10 @@ class _MapPageState extends State<MapPage> {
                 return GoogleMap(
                   initialCameraPosition: _initialLocation,
                   myLocationEnabled: true,
-                  myLocationButtonEnabled: false,
+                  myLocationButtonEnabled: true,
                   mapType: MapType.normal,
                   zoomGesturesEnabled: true,
-                  zoomControlsEnabled: false,
+                  zoomControlsEnabled: true,
                   markers: markerVM.markers,
                   circles: markerVM.circles,
                   onMapCreated: (GoogleMapController controller) {
