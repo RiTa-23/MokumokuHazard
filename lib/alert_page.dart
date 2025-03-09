@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
+import 'root_page.dart';
 
 class AlertPage extends StatefulWidget {
   @override
@@ -15,18 +16,20 @@ class _AlertPageState extends State<AlertPage> {
     // 画面表示時にバイブレーションを実行
     _startVibration();
 
-    // 20秒後に RootPage に自動遷移
+    // ✅ 20秒後に RootPage に遷移
     Timer(Duration(seconds: 20), () {
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => RootPage()),
-      );
+      if (mounted) { // エラー防止用
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => RootPage()),
+        );
+      }
     });
   }
 
   // バイブレーションを開始
   void _startVibration() async {
     if (await Vibration.hasVibrator() ?? false) {
-      Vibration.vibrate(duration: 500); // 500ms 振動
+      Vibration.vibrate(duration: 2000); // 2000ms 振動
     }
   }
 
@@ -67,12 +70,3 @@ class _AlertPageState extends State<AlertPage> {
   }
 }
 
-// RootPage の仮コード（遷移先のページ）
-class RootPage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(child: Text('Root Page')),
-    );
-  }
-}
