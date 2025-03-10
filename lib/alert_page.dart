@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:vibration/vibration.dart';
+import 'package:audioplayers/audioplayers.dart'; // 🎵 追加
 import 'root_page.dart';
 
 class AlertPage extends StatefulWidget {
@@ -9,16 +10,18 @@ class AlertPage extends StatefulWidget {
 }
 
 class _AlertPageState extends State<AlertPage> {
+  final AudioPlayer _audioPlayer = AudioPlayer(); // 🎵 追加
+
   @override
   void initState() {
     super.initState();
 
-    // 画面表示時にバイブレーションを実行
     _startVibration();
+    _playAlertSound(); // 🎵 アラート音を鳴らす
 
-    //  20秒後に RootPage に遷移
-    Timer(Duration(seconds: 20), () {
-      if (mounted) { // エラー防止用
+    // 12秒後に RootPage に遷移
+    Timer(Duration(seconds: 12), () {
+      if (mounted) { // エラー防止
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => RootPage()),
         );
@@ -33,25 +36,35 @@ class _AlertPageState extends State<AlertPage> {
     }
   }
 
+  // 🎵 アラート音を再生
+  void _playAlertSound() async {
+    await _audioPlayer.play(AssetSource('sounds/alert.m4a')); // 音声ファイルのパス
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose(); // 🎵 メモリ解放
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red, // 背景色を赤に設定
+      backgroundColor: Colors.red,
       body: Column(
         children: [
-          _buildTigerTapeLine(), //  上部の虎テープ
+          _buildTigerTapeLine(), // 上部の虎テープ
           Expanded(
             child: Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  //  ロゴを中央に表示
                   Image.asset(
                     'assets/logo.png', // ロゴのパス
-                    width: 150, // サイズ調整
+                    width: 150,
                     height: 150,
                   ),
-                  SizedBox(height: 20), // 間隔調整
+                  SizedBox(height: 20),
                   Text(
                     '⚠ WARNING ⚠',
                     style: TextStyle(
@@ -64,20 +77,20 @@ class _AlertPageState extends State<AlertPage> {
               ),
             ),
           ),
-          _buildTigerTapeLine(), //  下部の虎テープ
+          _buildTigerTapeLine(), // 下部の虎テープ
         ],
       ),
     );
   }
 
-  //  虎テープ（黄色と黒の斜めストライプ）を作成
+  // 虎テープ（黄色と黒の斜めストライプ）を作成
   Widget _buildTigerTapeLine() {
     return Container(
-      height: 30, // ラインの高さ
+      height: 30,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/tiger_tape.png'), //  斜めストライプの画像
-          fit: BoxFit.cover, // 横幅いっぱいに拡大
+          image: AssetImage('assets/tiger_tape.png'),
+          fit: BoxFit.cover,
         ),
       ),
     );
