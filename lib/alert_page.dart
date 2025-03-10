@@ -16,7 +16,7 @@ class _AlertPageState extends State<AlertPage> {
     // 画面表示時にバイブレーションを実行
     _startVibration();
 
-    // ✅ 20秒後に RootPage に遷移
+    //  20秒後に RootPage に遷移
     Timer(Duration(seconds: 20), () {
       if (mounted) { // エラー防止用
         Navigator.of(context).pushReplacement(
@@ -37,36 +37,49 @@ class _AlertPageState extends State<AlertPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.red, // 背景色を赤に設定
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // 上下に配置
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(top: 50.0),
-              child: Text(
-                '⚠ WARNING ⚠',
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+      body: Column(
+        children: [
+          _buildTigerTapeLine(), //  上部の虎テープ
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  //  ロゴを中央に表示
+                  Image.asset(
+                    'assets/logo.png', // ロゴのパス
+                    width: 150, // サイズ調整
+                    height: 150,
+                  ),
+                  SizedBox(height: 20), // 間隔調整
+                  Text(
+                    '⚠ WARNING ⚠',
+                    style: TextStyle(
+                      fontSize: 40,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(bottom: 50.0),
-              child: Text(
-                '⚠ WARNING ⚠',
-                style: TextStyle(
-                  fontSize: 40,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
+          ),
+          _buildTigerTapeLine(), //  下部の虎テープ
+        ],
+      ),
+    );
+  }
+
+  //  虎テープ（黄色と黒の斜めストライプ）を作成
+  Widget _buildTigerTapeLine() {
+    return Container(
+      height: 30, // ラインの高さ
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/tiger_tape.png'), //  斜めストライプの画像
+          fit: BoxFit.cover, // 横幅いっぱいに拡大
         ),
       ),
     );
   }
 }
-
