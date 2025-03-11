@@ -50,7 +50,7 @@ class _AlertPageState extends State<AlertPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.red,
+      backgroundColor: const Color.fromARGB(251, 139, 16, 7),
       body: Column(
         children: [
           _buildTigerTapeLine(), // 上部の虎テープ
@@ -59,6 +59,15 @@ class _AlertPageState extends State<AlertPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  SizedBox(height: 20),
+                  Text(
+                    '受動喫煙警戒区域に入りました',
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ), 
+                  ),
                   Image.asset(
                     'assets/logo.png', // ロゴのパス
                     width: 150,
