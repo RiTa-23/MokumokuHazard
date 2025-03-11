@@ -17,19 +17,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _checkLoginStatus();
-    });
-  }
-
-  void _checkLoginStatus() async {
-    User? user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      // すでにログインしている場合はRootPageに遷移
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => RootPage()),
-      );
-    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {});
   }
 
   @override
@@ -66,11 +54,11 @@ class _LoginPageState extends State<LoginPage> {
                             fontWeight: FontWeight.bold,
                             color: Color.fromARGB(255, 173, 73, 31),
                             //shadows: [
-                              //Shadow(
-                                //blurRadius: 5.0,
-                                //color: Colors.black,
-                                //offset: Offset(2, 2),
-                              //),
+                            //Shadow(
+                            //blurRadius: 5.0,
+                            //color: Colors.black,
+                            //offset: Offset(2, 2),
+                            //),
                             //],
                           ),
                         ),
@@ -110,15 +98,17 @@ class _LoginPageState extends State<LoginPage> {
                         onPressed: _isLoading ? null : _handleAuth,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.blue, // ボタン色
-                          minimumSize: Size(250, 50),//loginボタンのサイズ
+                          minimumSize: Size(250, 50), //loginボタンのサイズ
                           padding: EdgeInsets.symmetric(vertical: 12),
                           textStyle: TextStyle(fontSize: 18),
                         ),
-                       child: Text(
-    _isLogin ? 'Login' : 'Register',
-    style: TextStyle(color: const Color.fromARGB(255, 249, 249, 249)), // loginの文字色
-  ),
-),
+                        child: Text(
+                          _isLogin ? 'Login' : 'Register',
+                          style: TextStyle(
+                              color: const Color.fromARGB(
+                                  255, 249, 249, 249)), // loginの文字色
+                        ),
+                      ),
                 TextButton(
                   onPressed: _isLoading
                       ? null
@@ -128,7 +118,9 @@ class _LoginPageState extends State<LoginPage> {
                           });
                         },
                   child: Text(
-                    _isLogin ? 'Create an account' : 'Already have an account? Login',
+                    _isLogin
+                        ? 'Create an account'
+                        : 'Already have an account? Login',
                   ),
                 ),
                 if (infoText.isNotEmpty)
@@ -185,4 +177,3 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 }
-
