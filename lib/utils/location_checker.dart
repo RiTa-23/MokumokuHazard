@@ -14,11 +14,9 @@ class LocationChecker {
       );
 
       if (distance < circle.radius) {
-        print("入った");
         return true; // 範囲内に入ったら `true`
       }
     }
-    print("入ってない");
     return false; // どのサークルにも入っていない
   }
 

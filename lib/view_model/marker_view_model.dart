@@ -39,48 +39,25 @@ class MarkerViewModel extends ChangeNotifier {
     await markerListModel.getMarkers();
     var _circle_markers = markerListModel.markers.map((mModel) {
       return Marker(
-        markerId: MarkerId(mModel.user_id),
+        markerId: MarkerId(mModel.id),
         position: LatLng(mModel.latitude, mModel.longitude),
-        infoWindow: InfoWindow(title: mModel.user_id),
+        infoWindow: InfoWindow(title: mModel.name),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
       );
     }).toSet();
     _circles = markerListModel.markers.map((mModel) {
       return Circle(
-        circleId: CircleId(mModel.user_id),
+        circleId: CircleId(mModel.id),
         center: LatLng(mModel.latitude, mModel.longitude),
         radius: mModel.radius, // m 単位で指定
         fillColor: Colors.red.withOpacity(mModel.risk_level / 5.0 * 0.8),
+        strokeColor: Colors.red,
         strokeWidth: 1,
       );
     }).toSet();
 
     _markers = _smoking_markers.union(_circle_markers);
 
-    // //独自マーカーから Marker および Circle を生成
-    // Set<Marker> customMarkers = markerListModel.markers.map((mModel) {
-    //   double opacity = 0.3 + ((mModel.risk_level - 1) / 4.0) * 0.7;
-    //   return Marker(
-    //     markerId: MarkerId('custom_${mModel.user_id}'),
-    //     position: LatLng(mModel.latitude, mModel.longitude),
-    //     infoWindow: InfoWindow(
-    //         title: 'Risk: ${mModel.risk_level}',
-    //         snippet: 'Radius: ${mModel.radius} m'),
-    //     icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
-    //   );
-    // }).toSet();
-
-    // // 独自マーカーに対して Circle を生成。Circle の radius は m 単位で設定される
-    // Set<Circle> customCircles = markerListModel.markers.map((mModel) {
-    //   Color fillColor = Colors.red.withOpacity(mModel.risk_level / 5.0);
-    //   return Circle(
-    //     circleId: CircleId('circle_${mModel.user_id}'),
-    //     center: LatLng(mModel.latitude, mModel.longitude),
-    //     radius: mModel.radius, // m 単位で指定
-    //     strokeColor: fillColor,
-    //     strokeWidth: 2,
-    //   );
-    // }).toSet();
     notifyListeners();
   }
 }
