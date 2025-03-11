@@ -36,23 +36,31 @@ class _RootPageState extends State<RootPage> {
     switch (_selectedIndex) {
       case 0:
         page = const MapPage();
-        appBarTitle = 'Map Page';
+        appBarTitle = 'MAP';
         break;
       case 1:
         page = PostPage(onMarkerCreated: togglePage);
-        appBarTitle = 'Marker Page';
+        appBarTitle = 'MARKER';
         break;
       case 2:
         page = const ProfilePage();
-        appBarTitle = 'Profile Page';
+        appBarTitle = 'PROFILE';
+        break;
       default:
         page = const TestPage();
-        appBarTitle = 'Test Page';
+        appBarTitle = 'TEST';
     }
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.cyan,
+        //ロゴマーク画像
+        leading: Image.asset(
+          'assets/logo.png',
+          width: 40,
+          height: 40,
+        ),
+        centerTitle: true,
         title: Text(
           appBarTitle,
           style: TextStyle(
@@ -62,17 +70,19 @@ class _RootPageState extends State<RootPage> {
           ),
         ),
         actions: [
-          IconButton(
-              icon: Icon(
-                Icons.logout,
-                color: Colors.white,
-              ),
-              onPressed: () async {
-                await FirebaseAuth.instance.signOut();
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => LoginPage()),
-                );
-              }),
+          // ログアウトボタン
+          if (_selectedIndex == 2)
+            IconButton(
+                icon: Icon(
+                  Icons.logout,
+                  color: Colors.white,
+                ),
+                onPressed: () async {
+                  await FirebaseAuth.instance.signOut();
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => LoginPage()),
+                  );
+                }),
         ],
       ),
       body: page,
@@ -83,7 +93,7 @@ class _RootPageState extends State<RootPage> {
           });
         },
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.cyan,
         unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.map), label: 'map'),

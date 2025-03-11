@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:geolocator/geolocator.dart';
@@ -74,9 +75,9 @@ class _PostPageState extends State<PostPage> {
       child: Scaffold(
         body: Column(
           children: [
-            // 上2/3のGoogleMap表示
+            // 上のGoogleMap表示
             Expanded(
-              flex: 5,
+              flex: 6,
               child: Consumer<PostViewModel>(
                 builder: (context, postVM, child) {
                   return GoogleMap(
@@ -118,79 +119,106 @@ class _PostPageState extends State<PostPage> {
                 },
               ),
             ),
-            // 下1/3の詳細設定画面
+            // 下の詳細設定画面
             Expanded(
               flex: 4,
               child: Consumer<PostViewModel>(
                 builder: (context, postVM, child) {
-                  return postVM.selectedLocation == null
-                      ? Center(
-                          child: Text(
-                            'MAPをタップして地点を選択してください',
-                            style: TextStyle(fontSize: 16.0),
-                          ),
-                        )
-                      : Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // 場所の名前を入力するフィールド
-                              TextField(
-                                decoration: InputDecoration(labelText: '場所の説明'),
-                                onChanged: (value) {
-                                  postVM.updateLocationName(value);
-                                },
-                              ),
-                              // 半径を設定するスライドバー
-                              Row(
-                                children: [
-                                  Text(
-                                      '半径: ${postVM.radius.toStringAsFixed(0)} m'),
-                                  Expanded(
-                                    child: Slider(
-                                      value: postVM.radius,
-                                      min: 5.0,
-                                      max: 100.0,
-                                      divisions: 100,
-                                      label: postVM.radius.toStringAsFixed(0),
-                                      onChanged: (value) {
-                                        postVM.updateRadius(value);
-                                      },
-                                    ),
+                  return Container(
+                    color: Colors.grey[50],
+                    child: postVM.selectedLocation == null
+                        ? Center(
+                            child: AnimatedTextKit(
+                              animatedTexts: [
+                                WavyAnimatedText(
+                                  'MAPをタップして地点を選択してください',
+                                  textStyle: TextStyle(
+                                    color: Colors.orange,
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                ],
-                              ),
-                              // 危険度を設定するスライドバー
-                              Row(
-                                children: [
-                                  Text(
-                                      '危険度: ${postVM.riskLevel.toStringAsFixed(0)}'),
-                                  Expanded(
-                                    child: Slider(
-                                      value: postVM.riskLevel,
-                                      min: 1.0,
-                                      max: 5.0,
-                                      divisions: 4,
-                                      label:
-                                          postVM.riskLevel.toStringAsFixed(0),
-                                      onChanged: (value) {
-                                        postVM.updateRiskLevel(value);
-                                      },
+                                ),
+                              ],
+                            ),
+                          )
+                        : Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                // コメントを入力するフィールド
+                                TextField(
+                                  decoration:
+                                      InputDecoration(labelText: 'コメント'),
+                                  onChanged: (value) {
+                                    postVM.updateLocationName(value);
+                                  },
+                                ),
+                                // 半径を設定するスライドバー
+                                Row(
+                                  children: [
+                                    Text(
+                                        '半径: ${postVM.radius.toStringAsFixed(0)} m'),
+                                    Expanded(
+                                      child: Slider(
+                                        inactiveColor: Colors.blue[100],
+                                        activeColor: Colors.blue,
+                                        value: postVM.radius,
+                                        min: 5.0,
+                                        max: 100.0,
+                                        divisions: 100,
+                                        label: postVM.radius.toStringAsFixed(0),
+                                        onChanged: (value) {
+                                          postVM.updateRadius(value);
+                                        },
+                                      ),
                                     ),
+                                  ],
+                                ),
+                                // 危険度を設定するスライドバー
+                                Row(
+                                  children: [
+                                    Text(
+                                        '危険度: ${postVM.riskLevel.toStringAsFixed(0)}'),
+                                    Expanded(
+                                      child: Slider(
+                                        inactiveColor: Colors.red[100],
+                                        activeColor: Colors.red,
+                                        value: postVM.riskLevel,
+                                        min: 1.0,
+                                        max: 5.0,
+                                        divisions: 4,
+                                        label:
+                                            postVM.riskLevel.toStringAsFixed(0),
+                                        onChanged: (value) {
+                                          postVM.updateRiskLevel(value);
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                // 作成ボタン
+                                ElevatedButton.icon(
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.orange,
+                                      foregroundColor: Colors.orange[900]),
+                                  onPressed: () {
+                                    postVM.saveMarker(
+                                        context, widget.onMarkerCreated);
+                                  },
+                                  icon: const Icon(
+                                    Icons.add_location,
+                                    size: 16,
+                                    color: Colors.white,
                                   ),
-                                ],
-                              ),
-                              // 作成ボタン
-                              ElevatedButton(
-                                onPressed: () {
-                                  postVM.saveMarker(
-                                      context, widget.onMarkerCreated);
-                                },
-                                child: Text('作成'),
-                              ),
-                            ],
+                                  label: const Text(
+                                    "マーカー作成",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        );
+                  );
                 },
               ),
             ),

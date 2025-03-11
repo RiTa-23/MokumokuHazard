@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'root_page.dart'; // 遷移先画面のインポート
@@ -26,6 +27,7 @@ class _LoginPageState extends State<LoginPage> {
       backgroundColor: Colors.blue[100], // 背景色
       body: Center(
         child: Card(
+          color: Colors.white, // カードの色を指定
           elevation: 8, // 影の強さ
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15), // 角を丸くする
@@ -46,20 +48,24 @@ class _LoginPageState extends State<LoginPage> {
                           width: 100,
                           height: 100,
                         ),
-                        SizedBox(height: 10),
-                        Text(
-                          'もくもくハザード',
-                          style: TextStyle(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Color.fromARGB(255, 173, 73, 31),
-                            //shadows: [
-                            //Shadow(
-                            //blurRadius: 5.0,
-                            //color: Colors.black,
-                            //offset: Offset(2, 2),
-                            //),
-                            //],
+                        SizedBox(
+                          width: 250.0,
+                          child: TextLiquidFill(
+                            text: 'もくもくハザード',
+                            waveColor: Colors.orange,
+                            boxBackgroundColor: Colors.white,
+                            textStyle: TextStyle(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              //shadows: [
+                              //Shadow(
+                              //blurRadius: 5.0,
+                              //color: Colors.black,
+                              //offset: Offset(2, 2),
+                              //),
+                              //],
+                            ),
+                            boxHeight: 60.0,
                           ),
                         ),
                       ],
@@ -103,10 +109,10 @@ class _LoginPageState extends State<LoginPage> {
                           textStyle: TextStyle(fontSize: 18),
                         ),
                         child: Text(
-                          _isLogin ? 'Login' : 'Register',
+                          _isLogin ? 'ログイン' : '登録',
                           style: TextStyle(
-                              color: const Color.fromARGB(
-                                  255, 249, 249, 249)), // loginの文字色
+                              color: const Color.fromARGB(255, 249, 249, 249),
+                              fontWeight: FontWeight.bold), // loginの文字色
                         ),
                       ),
                 TextButton(
@@ -118,9 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                           });
                         },
                   child: Text(
-                    _isLogin
-                        ? 'Create an account'
-                        : 'Already have an account? Login',
+                    _isLogin ? '新規登録はこちら' : 'アカウントをお持ちの方',
                   ),
                 ),
                 if (infoText.isNotEmpty)
