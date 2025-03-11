@@ -33,6 +33,8 @@ dependencies:
   provider: ^6.0.3
   vibration: ^1.7.6
   audioplayers: ^5.2.1 
+  animated_text_kit: ^4.2.2
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
@@ -44,6 +46,7 @@ dependencies:
   flutter_compass: ^0.8.1
   envied: ^1.1.1
   cloud_firestore: ^5.6.5
+  shared_preferences: ^2.0.16 
 
 dev_dependencies:
   flutter_test:
@@ -66,6 +69,9 @@ flutter:
   uses-material-design: true
 
   assets:
+    - assets/background1.jpg
+    - assets/background2.jpg
+    - assets/background3.jpg
     - assets/logo.png
     - assets/tiger_tape.png
     - assets/sounds/alert.m4a

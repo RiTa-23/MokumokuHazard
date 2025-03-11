@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import 'package:mokumou_hazard/model/smoking_area_model.dart';
 import 'package:mokumou_hazard/model/marker_model.dart';
 import 'package:mokumou_hazard/view_model/marker_view_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'root_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,11 +37,36 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginPage(),
+      home: AuthCheck(),
     );
+  }
+}
+
+class AuthCheck extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<User?>(
+      future: _checkLoginStatus(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Scaffold(
+            body: Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+        } else if (snapshot.hasData) {
+          return RootPage();
+        } else {
+          return LoginPage();
+        }
+      },
+    );
+  }
+
+  Future<User?> _checkLoginStatus() async {
+    return FirebaseAuth.instance.currentUser;
   }
 }

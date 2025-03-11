@@ -1,9 +1,13 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:provider/provider.dart';
 import 'package:mokumou_hazard/view_model/marker_view_model.dart';
+import 'package:mokumou_hazard/alert_page.dart'; //遷移先
+import 'package:mokumou_hazard/utils/location_checker.dart'; //アラートチェック;
+import 'package:mokumou_hazard/utils/get_current_location.dart'; //現在地取得
 
 class MapPage extends StatefulWidget {
   const MapPage({super.key});
@@ -13,9 +17,9 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  // マップビューの初期位置（北九州に設定）
-  CameraPosition _initialLocation = CameraPosition(
-      target: LatLng(33.881918764227144, 130.87829735395513), zoom: 15.0);
+  // マップビューの初期位置
+  CameraPosition _initialLocation =
+      CameraPosition(target: LatLng(33.5902, 130.4028), zoom: 14.0);
   // マップの表示制御用
   late GoogleMapController mapController;
   // 現在位置の記憶用
@@ -43,43 +47,11 @@ class _MapPageState extends State<MapPage> {
 
   // 現在位置の取得方法
   Future<void> _getCurrentLocation() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // 位置情報サービスが有効かどうかを確認
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // 位置情報サービスが無効の場合、エラーメッセージを表示
-      print('位置情報サービスが無効です。');
-      return;
-    }
-
-    // 位置情報の権限をリクエスト
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // 位置情報の権限が拒否された場合、エラーメッセージを表示
-        print('位置情報の権限が拒否されました。');
-        return;
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // 位置情報の権限が永久に拒否された場合、エラーメッセージを表示
-      print('位置情報の権限が永久に拒否されました。');
-      return;
-    }
-
-    // 位置情報を取得
-    Position position = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.high);
-    if (mounted) {
+    Position? position = await getCurrentLocation(context);
+    if (position != null && mounted) {
       setState(() {
         // 位置を変数に格納する
         _currentPosition = position;
-
-        print('CURRENT POS: $_currentPosition');
 
         // カメラを現在位置に移動させる場合
         _displayCurrentLocation();
@@ -95,6 +67,10 @@ class _MapPageState extends State<MapPage> {
     super.initState();
     _getCurrentLocation();
 
+    Timer.periodic(Duration(seconds: 2), (timer) {
+      _checkCurrentLocation();
+    });
+
     // コンパスのデータを取得
     FlutterCompass.events!.listen((event) {
       if (mounted) {
@@ -103,6 +79,34 @@ class _MapPageState extends State<MapPage> {
         });
       }
     });
+  }
+
+  /// **現在地を取得し、サークル内か判定**
+  Future<void> _checkCurrentLocation() async {
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    setState(() {
+      _currentPosition = position;
+    });
+
+    _checkLocation(position);
+  }
+
+  /// **サークル内に入ったか判定**
+  void _checkLocation(Position position) {
+    final markerVM = Provider.of<MarkerViewModel>(context, listen: false);
+    if (LocationChecker.isInsideCircle(position, markerVM.circles)) {
+      _navigateToNextPage();
+    }
+  }
+
+  /// **画面遷移**
+  void _navigateToNextPage() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AlertPage()),
+    );
   }
 
   @override
@@ -213,31 +217,31 @@ class _MapPageState extends State<MapPage> {
                 ),
               ),
             ),
-            // 現在地のテキスト表示
-            SafeArea(
-              child: Align(
-                alignment: Alignment.topCenter,
-                child: Container(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Container(
-                    height: 60.0,
-                    color: Colors.white,
-                    child: Column(
-                      children: [
-                        Text(
-                          _currentAddress,
-                          style: TextStyle(fontSize: 16.0),
-                        ),
-                        Text(
-                          '方向: $_direction°',
-                          style: TextStyle(fontSize: 16.0),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // // 現在地のテキスト表示
+            // SafeArea(
+            //   child: Align(
+            //     alignment: Alignment.topCenter,
+            //     child: Container(
+            //       padding: const EdgeInsets.all(10.0),
+            //       child: Container(
+            //         height: 60.0,
+            //         color: Colors.white,
+            //         child: Column(
+            //           children: [
+            //             Text(
+            //               _currentAddress,
+            //               style: TextStyle(fontSize: 16.0),
+            //             ),
+            //             Text(
+            //               '方向: $_direction°',
+            //               style: TextStyle(fontSize: 16.0),
+            //             ),
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
