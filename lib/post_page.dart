@@ -76,7 +76,7 @@ class _PostPageState extends State<PostPage> {
           children: [
             // 上2/3のGoogleMap表示
             Expanded(
-              flex: 5,
+              flex: 6,
               child: Consumer<PostViewModel>(
                 builder: (context, postVM, child) {
                   return GoogleMap(
@@ -148,6 +148,8 @@ class _PostPageState extends State<PostPage> {
                                       '半径: ${postVM.radius.toStringAsFixed(0)} m'),
                                   Expanded(
                                     child: Slider(
+                                      inactiveColor: Colors.blue[100],
+                                      activeColor: Colors.blue,
                                       value: postVM.radius,
                                       min: 5.0,
                                       max: 100.0,
@@ -167,6 +169,8 @@ class _PostPageState extends State<PostPage> {
                                       '危険度: ${postVM.riskLevel.toStringAsFixed(0)}'),
                                   Expanded(
                                     child: Slider(
+                                      inactiveColor: Colors.red[100],
+                                      activeColor: Colors.red,
                                       value: postVM.riskLevel,
                                       min: 1.0,
                                       max: 5.0,
