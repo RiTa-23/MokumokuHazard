@@ -8,6 +8,7 @@ import 'package:mokumou_hazard/model/marker_model.dart';
 import 'package:mokumou_hazard/view_model/marker_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'root_page.dart';
+//import 'utils/data_upload.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +61,7 @@ class AuthCheck extends StatelessWidget {
         } else if (snapshot.hasData) {
           return RootPage();
         } else {
+          //return DataUploadPage();
           return LoginPage();
         }
       },
