@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mokumou_hazard/map_page.dart';
 import 'package:mokumou_hazard/post_page.dart';
-import 'package:mokumou_hazard/test_page.dart';
+//import 'package:mokumou_hazard/test_page.dart';
 import 'package:mokumou_hazard/profile_page.dart';
 import 'auth_gate.dart';
 
@@ -42,13 +42,13 @@ class _RootPageState extends State<RootPage> {
         page = PostPage(onMarkerCreated: togglePage);
         appBarTitle = 'MARKER';
         break;
-      case 2:
+      default:
         page = const ProfilePage();
         appBarTitle = 'PROFILE';
         break;
-      default:
-        page = const TestPage();
-        appBarTitle = 'TEST';
+      // default:
+      //   page = const TestPage();
+      //   appBarTitle = 'TEST';
     }
 
     return Scaffold(
@@ -100,8 +100,8 @@ class _RootPageState extends State<RootPage> {
           BottomNavigationBarItem(
               icon: Icon(Icons.add_location), label: 'marker'),
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.data_array), label: 'forTest'),
+          // BottomNavigationBarItem(
+          //     icon: Icon(Icons.data_array), label: 'forTest'),
         ],
       ),
     );

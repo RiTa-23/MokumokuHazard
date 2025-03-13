@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:mokumou_hazard/view_model/marker_view_model.dart';
+import 'package:mokumou_hazard/model/marker_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -10,15 +13,14 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   // デフォルトのユーザー名
-  String userName = 'User'; 
+  String userName = 'User';
   // デフォルトの背景画像
-  String backgroundImage = 'assets/background2.jpg'; 
-  // マーカーリスト
-  List<String> markers = []; 
+  String backgroundImage = 'assets/background2.jpg';
 
   @override
   void initState() {
     super.initState();
+    Provider.of<MarkerListModel>(context, listen: false).getUserMarkers();
     _loadData();
   }
 
@@ -27,8 +29,8 @@ class _ProfilePageState extends State<ProfilePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       userName = prefs.getString('user_name') ?? 'User';
-      backgroundImage = prefs.getString('background_image') ?? 'assets/background2.jpg';
-      markers = prefs.getStringList('markers') ?? [];
+      backgroundImage =
+          prefs.getString('background_image') ?? 'assets/background2.jpg';
     });
   }
 
@@ -50,54 +52,48 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // マーカーを追加
-  void _addMarker() {
-    TextEditingController markerController = TextEditingController();
+  // void _addMarker() {
+  //   TextEditingController markerController = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("マーカーを追加"),
-          content: TextField(
-            controller: markerController,
-            decoration: InputDecoration(labelText: "マーカー名"),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("キャンセル"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (markerController.text.isNotEmpty) {
-                  setState(() {
-                    markers.add(markerController.text);
-                  });
-                  SharedPreferences prefs = await SharedPreferences.getInstance();
-                  await prefs.setStringList('markers', markers);
-                }
-                Navigator.pop(context);
-              },
-              child: Text("追加"),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  //   showDialog(
+  //     context: context,
+  //     builder: (context) {
+  //       return AlertDialog(
+  //         title: Text("マーカーを追加"),
+  //         content: TextField(
+  //           controller: markerController,
+  //           decoration: InputDecoration(labelText: "マーカー名"),
+  //         ),
+  //         actions: [
+  //           TextButton(
+  //             onPressed: () => Navigator.pop(context),
+  //             child: Text("キャンセル"),
+  //           ),
+  //           ElevatedButton(
+  //             onPressed: () async {
+  //               if (markerController.text.isNotEmpty) {
+  //                 Provider.of<MarkerListModel>(context, listen: false)
+  //                     .addMarker(Marker(name: markerController.text));
+  //               }
+  //               Navigator.pop(context);
+  //             },
+  //             child: Text("追加"),
+  //           ),
+  //         ],
+  //       );
+  //     },
+  //   );
+  // }
 
   // マーカーを削除
-  void _removeMarker(int index) async {
-    setState(() {
-      markers.removeAt(index);
-    });
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setStringList('markers', markers);
+  void _removeMarker(String markerID) async {
+    Provider.of<MarkerListModel>(context, listen: false).removeMarker(markerID);
   }
 
   // 設定画面を開く (ユーザー名 & 背景画像)
   void _openSettings() {
-    TextEditingController nameController = TextEditingController(text: userName);
+    TextEditingController nameController =
+        TextEditingController(text: userName);
 
     showDialog(
       context: context,
@@ -193,8 +189,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(preferredSize: Size.fromHeight(30),
-      child: AppBar(
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(30),
+        child: AppBar(
           // appbarの画像表示
           flexibleSpace: Container(
             decoration: BoxDecoration(
@@ -232,7 +229,10 @@ class _ProfilePageState extends State<ProfilePage> {
                 padding: EdgeInsets.only(top: 10),
                 child: CircleAvatar(
                   radius: 70,
-                  child: Icon(Icons.person, size: 120,),
+                  child: Icon(
+                    Icons.person,
+                    size: 120,
+                  ),
                 ),
               ),
               Text(
@@ -240,16 +240,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
               Text(
-                '----------------------------------------------------------'
-              ),
+                  '----------------------------------------------------------'),
               // マーカーの数を表示
-              Text(
-                '設置したマーカーの数：${markers.length}',
-                style: TextStyle(fontSize: 16),
+              Consumer<MarkerListModel>(
+                builder: (context, markerListModel, child) {
+                  return Text(
+                    '設置したマーカーの数：${markerListModel.userMarkers.length}',
+                    style: TextStyle(fontSize: 16),
+                  );
+                },
               ),
               Text(
-                '----------------------------------------------------------'
-              ),
+                  '----------------------------------------------------------'),
               SizedBox(height: 5),
               // マーカー一覧
               Padding(
@@ -262,8 +264,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         Icon(Icons.edit, color: Colors.blue),
                         SizedBox(width: 5),
                         Text(
-                          '＜マーカー一覧＞',
-                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          'マーカーリスト',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -281,24 +284,30 @@ class _ProfilePageState extends State<ProfilePage> {
               Expanded(
                 child: Padding(
                   padding: EdgeInsets.symmetric(horizontal: 30),
-                  child: ListView.builder(
-                    itemCount: markers.length,
-                    itemBuilder: (context, index) {
-                      return Column(
-                        children: [
-                          buildInfoItem(Icons.location_on, markers[index], index),
-                          SizedBox(height: 20.0),
-                        ],
+                  child: Consumer<MarkerListModel>(
+                    builder: (context, markerListModel, child) {
+                      return ListView.builder(
+                        itemCount: markerListModel.userMarkers.length,
+                        itemBuilder: (context, index) {
+                          final marker = markerListModel.userMarkers[index];
+                          return Column(
+                            children: [
+                              buildInfoItem(
+                                  Icons.location_on, marker.name, marker.id),
+                              SizedBox(height: 20.0),
+                            ],
+                          );
+                        },
                       );
                     },
                   ),
                 ),
               ),
-              // マーカー追加ボタン（テスト用）
-              FloatingActionButton(
-                onPressed: _addMarker, // ボタンを押してマーカーを追加
-                child: Icon(Icons.location_on_outlined),
-              ),
+              // // マーカー追加ボタン（テスト用）
+              // FloatingActionButton(
+              //   onPressed: _addMarker, // ボタンを押してマーカーを追加
+              //   child: Icon(Icons.location_on_outlined),
+              // ),
             ],
           ),
         ],
@@ -306,7 +315,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildInfoItem(IconData icon, String info, int index) {
+  Widget buildInfoItem(IconData icon, String info, String markerId) {
     return Row(
       children: [
         Icon(icon, color: Colors.grey[700]),
@@ -315,7 +324,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Spacer(),
         IconButton(
           icon: Icon(Icons.delete, color: Colors.red),
-          onPressed: () => _removeMarker(index), // 削除ボタンを押してマーカーを削除
+          onPressed: () => _removeMarker(markerId), // 削除ボタンを押してマーカーを削除
         ),
       ],
     );
