@@ -19,7 +19,7 @@ class _ProfilePageState extends State<ProfilePage> {
   // デフォルトの背景画像
   String? backgroundImage = '';
   // 一時的な背景画像
-  String? tempBackgroundImage;
+  String? tempBackgroundImage = '';
   // プロフィール画像
   File? profileImage;
 
@@ -105,16 +105,21 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        image: tempBackgroundImage != null
+                        image: tempBackgroundImage != null &&
+                                tempBackgroundImage!.isNotEmpty
                             ? DecorationImage(
                                 image: AssetImage(tempBackgroundImage!),
                                 fit: BoxFit.cover,
                               )
                             : null,
                         borderRadius: BorderRadius.circular(10),
-                        color: tempBackgroundImage == null ? Colors.grey : null,
+                        color: tempBackgroundImage == null ||
+                                tempBackgroundImage!.isEmpty
+                            ? Colors.grey
+                            : null,
                       ),
-                      child: tempBackgroundImage == null
+                      child: tempBackgroundImage == null ||
+                              tempBackgroundImage!.isEmpty
                           ? Center(child: Text('背景画像なし'))
                           : null,
                     ),
@@ -209,7 +214,7 @@ class _ProfilePageState extends State<ProfilePage> {
       body: Stack(
         children: [
           // 背景画像
-          if (backgroundImage != null)
+          if (backgroundImage != null && backgroundImage!.isNotEmpty)
             Container(
               decoration: BoxDecoration(
                 image: DecorationImage(
