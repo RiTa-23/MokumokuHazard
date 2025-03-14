@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:mokumou_hazard/map_page.dart';
-import 'package:mokumou_hazard/post_page.dart';
+import 'package:mokumou_hazard/pages/map_page.dart';
+import 'package:mokumou_hazard/pages/post_page.dart';
 //import 'package:mokumou_hazard/test_page.dart';
-import 'package:mokumou_hazard/profile_page.dart';
+import 'package:mokumou_hazard/pages/profile_page.dart';
 import 'auth_gate.dart';
 
 /// ボトムナビゲーションを実装

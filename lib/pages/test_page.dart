@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:mokumou_hazard/alert_page.dart';
+import 'package:mokumou_hazard/pages/alert_page.dart';
 
 class TestPage extends StatefulWidget {
   const TestPage({super.key});

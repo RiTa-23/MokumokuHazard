@@ -21,7 +21,8 @@ class _AlertPageState extends State<AlertPage> {
 
     // 12秒後に RootPage に遷移
     Timer(Duration(seconds: 12), () {
-      if (mounted) { // エラー防止
+      if (mounted) {
+        // エラー防止
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(builder: (context) => RootPage()),
         );
@@ -66,7 +67,7 @@ class _AlertPageState extends State<AlertPage> {
                       fontSize: 25,
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
-                    ), 
+                    ),
                   ),
                   Image.asset(
                     'assets/logo.png', // ロゴのパス
