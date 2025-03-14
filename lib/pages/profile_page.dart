@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:mokumou_hazard/model/marker_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mokumou_hazard/widgets/info_item.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -18,6 +20,8 @@ class _ProfilePageState extends State<ProfilePage> {
   String? backgroundImage = '';
   // 一時的な背景画像
   String? tempBackgroundImage;
+  // プロフィール画像
+  File? profileImage;
 
   @override
   void initState() {
@@ -32,11 +36,16 @@ class _ProfilePageState extends State<ProfilePage> {
     setState(() {
       userName = prefs.getString('user_name') ?? 'User';
       backgroundImage = prefs.getString('background_image');
+      String? profileImagePath = prefs.getString('profile_image');
+      if (profileImagePath != null && profileImagePath.isNotEmpty) {
+        profileImage = File(profileImagePath);
+      }
     });
   }
 
   // ユーザー名と背景画像を保存
-  Future<void> _saveUserData({String? newName, String? newBackground}) async {
+  Future<void> _saveUserData(
+      {String? newName, String? newBackground, String? newProfileImage}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (newName != null) {
       setState(() {
@@ -51,11 +60,27 @@ class _ProfilePageState extends State<ProfilePage> {
       await prefs.setString(
           'background_image', newBackground.isEmpty ? '' : newBackground);
     }
+    if (newProfileImage != null) {
+      setState(() {
+        profileImage = File(newProfileImage);
+      });
+      await prefs.setString('profile_image', newProfileImage);
+    }
   }
 
   // マーカーを削除
   void _removeMarker(String markerID) async {
     Provider.of<MarkerListModel>(context, listen: false).removeMarker(markerID);
+  }
+
+  // プロフィール画像を選択
+  Future<void> _pickProfileImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      await _saveUserData(newProfileImage: pickedFile.path);
+    }
   }
 
   // 設定画面を開く (ユーザー名 & 背景画像)
@@ -193,7 +218,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-          // 設定ボタンを含むAppBar
+          // 設定ボタンを右上に配置
           Positioned(
             top: 0,
             right: 0,
@@ -208,11 +233,18 @@ class _ProfilePageState extends State<ProfilePage> {
               Padding(
                 // ユーザーアイコン
                 padding: EdgeInsets.only(top: 30),
-                child: CircleAvatar(
-                  radius: 70,
-                  child: Icon(
-                    Icons.person,
-                    size: 70,
+                child: GestureDetector(
+                  onTap: _pickProfileImage,
+                  child: CircleAvatar(
+                    radius: 70,
+                    backgroundImage:
+                        profileImage != null ? FileImage(profileImage!) : null,
+                    child: profileImage == null
+                        ? Icon(
+                            Icons.person,
+                            size: 70,
+                          )
+                        : null,
                   ),
                 ),
               ),
@@ -304,50 +336,4 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
   }
-
-  // Widget buildInfoItem(IconData icon, String info, String markerId,
-  //     double latitude, double longitude, int riskLevel, double radius) {
-  //   return Card(
-  //     color: Colors.white,
-  //     child: Row(
-  //       children: [
-  //         Spacer(),
-  //         Icon(icon, color: Colors.grey[700]),
-  //         SizedBox(width: 10),
-  //         Center(
-  //           child: Container(
-  //             padding: EdgeInsets.all(10),
-  //             width: 250,
-  //             child: Column(
-  //               children: [
-  //                 Text(info, style: TextStyle(fontSize: 15)),
-  //                 Row(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: [
-  //                     Icon(Icons.circle, color: Colors.blue, size: 15),
-  //                     Text('半径:$radius', style: TextStyle(fontSize: 13)),
-  //                   ],
-  //                 ),
-  //                 Row(
-  //                   mainAxisAlignment: MainAxisAlignment.center,
-  //                   children: [
-  //                     Icon(Icons.warning, color: Colors.red, size: 15),
-  //                     Text('危険度:$riskLevel', style: TextStyle(fontSize: 13)),
-  //                   ],
-  //                 ),
-  //                 Text('緯度:$latitude', style: TextStyle(fontSize: 10)),
-  //                 Text('経度:$longitude', style: TextStyle(fontSize: 10)),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //         Spacer(),
-  //         IconButton(
-  //           icon: Icon(Icons.delete, color: Colors.red),
-  //           onPressed: () => _removeMarker(markerId), // 削除ボタンを押してマーカーを削除
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
 }
