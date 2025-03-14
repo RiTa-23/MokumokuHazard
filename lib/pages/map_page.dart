@@ -5,7 +5,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:flutter_compass/flutter_compass.dart';
 import 'package:provider/provider.dart';
 import 'package:mokumou_hazard/view_model/marker_view_model.dart';
-import 'package:mokumou_hazard/alert_page.dart'; //遷移先
+import 'package:mokumou_hazard/pages/alert_page.dart'; //遷移先
 import 'package:mokumou_hazard/utils/location_checker.dart'; //アラートチェック;
 import 'package:mokumou_hazard/utils/get_current_location.dart'; //現在地取得
 

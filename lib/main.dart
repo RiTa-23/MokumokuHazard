@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'auth_gate.dart';
+import 'pages/auth_gate.dart';
 import 'package:provider/provider.dart';
 import 'package:mokumou_hazard/model/smoking_area_model.dart';
 import 'package:mokumou_hazard/model/marker_model.dart';
 import 'package:mokumou_hazard/view_model/marker_view_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'root_page.dart';
+import 'pages/root_page.dart';
 //import 'utils/data_upload.dart';
 
 void main() async {
