@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mokumou_hazard/view_model/marker_view_model.dart';
 import 'package:mokumou_hazard/model/marker_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mokumou_hazard/widgets/info_item.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -15,7 +17,11 @@ class _ProfilePageState extends State<ProfilePage> {
   // デフォルトのユーザー名
   String userName = 'User';
   // デフォルトの背景画像
-  String backgroundImage = 'assets/background2.jpg';
+  String? backgroundImage = '';
+  // 一時的な背景画像
+  String? tempBackgroundImage = '';
+  // プロフィール画像
+  File? profileImage;
 
   @override
   void initState() {
@@ -29,13 +35,17 @@ class _ProfilePageState extends State<ProfilePage> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
       userName = prefs.getString('user_name') ?? 'User';
-      backgroundImage =
-          prefs.getString('background_image') ?? 'assets/background2.jpg';
+      backgroundImage = prefs.getString('background_image');
+      String? profileImagePath = prefs.getString('profile_image');
+      if (profileImagePath != null && profileImagePath.isNotEmpty) {
+        profileImage = File(profileImagePath);
+      }
     });
   }
 
   // ユーザー名と背景画像を保存
-  Future<void> _saveUserData({String? newName, String? newBackground}) async {
+  Future<void> _saveUserData(
+      {String? newName, String? newBackground, String? newProfileImage}) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     if (newName != null) {
       setState(() {
@@ -45,106 +55,109 @@ class _ProfilePageState extends State<ProfilePage> {
     }
     if (newBackground != null) {
       setState(() {
-        backgroundImage = newBackground;
+        backgroundImage = newBackground.isEmpty ? null : newBackground;
       });
-      await prefs.setString('background_image', newBackground);
+      await prefs.setString(
+          'background_image', newBackground.isEmpty ? '' : newBackground);
+    }
+    if (newProfileImage != null) {
+      setState(() {
+        profileImage = File(newProfileImage);
+      });
+      await prefs.setString('profile_image', newProfileImage);
     }
   }
-
-  // マーカーを追加
-  // void _addMarker() {
-  //   TextEditingController markerController = TextEditingController();
-
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: Text("マーカーを追加"),
-  //         content: TextField(
-  //           controller: markerController,
-  //           decoration: InputDecoration(labelText: "マーカー名"),
-  //         ),
-  //         actions: [
-  //           TextButton(
-  //             onPressed: () => Navigator.pop(context),
-  //             child: Text("キャンセル"),
-  //           ),
-  //           ElevatedButton(
-  //             onPressed: () async {
-  //               if (markerController.text.isNotEmpty) {
-  //                 Provider.of<MarkerListModel>(context, listen: false)
-  //                     .addMarker(Marker(name: markerController.text));
-  //               }
-  //               Navigator.pop(context);
-  //             },
-  //             child: Text("追加"),
-  //           ),
-  //         ],
-  //       );
-  //     },
-  //   );
-  // }
 
   // マーカーを削除
   void _removeMarker(String markerID) async {
     Provider.of<MarkerListModel>(context, listen: false).removeMarker(markerID);
   }
 
+  // プロフィール画像を選択
+  Future<void> _pickProfileImage() async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      await _saveUserData(newProfileImage: pickedFile.path);
+    }
+  }
+
   // 設定画面を開く (ユーザー名 & 背景画像)
   void _openSettings() {
     TextEditingController nameController =
         TextEditingController(text: userName);
+    tempBackgroundImage = backgroundImage;
 
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text("設定"),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              GestureDetector(
-                onTap: () => _showBackgroundPicker(),
-                child: Container(
-                  width: 100,
-                  height: 100,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(backgroundImage),
-                      fit: BoxFit.cover,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              title: Text("設定"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    onTap: () => _showBackgroundPicker(setState),
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        image: tempBackgroundImage != null &&
+                                tempBackgroundImage!.isNotEmpty
+                            ? DecorationImage(
+                                image: AssetImage(tempBackgroundImage!),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                        borderRadius: BorderRadius.circular(10),
+                        color: tempBackgroundImage == null ||
+                                tempBackgroundImage!.isEmpty
+                            ? Colors.grey
+                            : null,
+                      ),
+                      child: tempBackgroundImage == null ||
+                              tempBackgroundImage!.isEmpty
+                          ? Center(child: Text('背景画像なし'))
+                          : null,
                     ),
-                    borderRadius: BorderRadius.circular(10),
                   ),
+                  SizedBox(height: 10),
+                  TextField(
+                    controller: nameController,
+                    decoration: InputDecoration(labelText: "ユーザー名を変更"),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("キャンセル"),
                 ),
-              ),
-              SizedBox(height: 10),
-              TextField(
-                controller: nameController,
-                decoration: InputDecoration(labelText: "ユーザー名を変更"),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text("キャンセル"),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                await _saveUserData(newName: nameController.text); // 新しい名前を保存
-                Navigator.pop(context);
-              },
-              child: Text("保存"),
-            ),
-          ],
+                ElevatedButton(
+                  onPressed: () async {
+                    await _saveUserData(
+                        newName: nameController.text,
+                        newBackground:
+                            tempBackgroundImage ?? ''); // 新しい名前と背景画像を保存
+                    Navigator.pop(context);
+                  },
+                  child: Text("保存"),
+                ),
+              ],
+            );
+          },
         );
       },
     );
   }
 
   // 背景画像リスト
-  void _showBackgroundPicker() {
+  void _showBackgroundPicker(StateSetter setState) {
     List<String> backgrounds = [
+      '',
       'assets/background1.jpg',
       'assets/background2.jpg',
       'assets/background3.jpg',
@@ -159,8 +172,11 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Column(
               children: backgrounds.map((imagePath) {
                 return GestureDetector(
-                  onTap: () async {
-                    await _saveUserData(newBackground: imagePath);
+                  onTap: () {
+                    setState(() {
+                      tempBackgroundImage =
+                          imagePath.isEmpty ? null : imagePath;
+                    });
                     Navigator.pop(context);
                   },
                   child: Padding(
@@ -169,12 +185,18 @@ class _ProfilePageState extends State<ProfilePage> {
                       width: 100,
                       height: 100,
                       decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(imagePath),
-                          fit: BoxFit.cover,
-                        ),
+                        image: imagePath.isNotEmpty
+                            ? DecorationImage(
+                                image: AssetImage(imagePath),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
                         borderRadius: BorderRadius.circular(10),
+                        color: imagePath.isEmpty ? Colors.grey : null,
                       ),
+                      child: imagePath.isEmpty
+                          ? Center(child: Text('背景画像なし'))
+                          : null,
                     ),
                   ),
                 );
@@ -189,36 +211,25 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: Size.fromHeight(30),
-        child: AppBar(
-          // appbarの画像表示
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/background3.jpg'),
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
-          //右上の設定アイコン
-          actions: [
-            IconButton(
-              icon: Icon(Icons.settings),
-              onPressed: _openSettings,
-            ),
-          ],
-        ),
-      ),
       body: Stack(
         children: [
-          // アイコンから下の画像を表示
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(backgroundImage),
-                fit: BoxFit.cover,
+          // 背景画像
+          if (backgroundImage != null && backgroundImage!.isNotEmpty)
+            Container(
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: AssetImage(backgroundImage!),
+                  fit: BoxFit.cover,
+                ),
               ),
+            ),
+          // 設定ボタンを右上に配置
+          Positioned(
+            top: 0,
+            right: 0,
+            child: IconButton(
+              icon: Icon(Icons.settings),
+              onPressed: _openSettings,
             ),
           ),
           Column(
@@ -226,12 +237,19 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Padding(
                 // ユーザーアイコン
-                padding: EdgeInsets.only(top: 10),
-                child: CircleAvatar(
-                  radius: 70,
-                  child: Icon(
-                    Icons.person,
-                    size: 120,
+                padding: EdgeInsets.only(top: 30),
+                child: GestureDetector(
+                  onTap: _pickProfileImage,
+                  child: CircleAvatar(
+                    radius: 70,
+                    backgroundImage:
+                        profileImage != null ? FileImage(profileImage!) : null,
+                    child: profileImage == null
+                        ? Icon(
+                            Icons.person,
+                            size: 70,
+                          )
+                        : null,
                   ),
                 ),
               ),
@@ -239,19 +257,20 @@ class _ProfilePageState extends State<ProfilePage> {
                 userName,
                 style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
               ),
-              Text(
-                  '----------------------------------------------------------'),
               // マーカーの数を表示
               Consumer<MarkerListModel>(
                 builder: (context, markerListModel, child) {
-                  return Text(
-                    '設置したマーカーの数：${markerListModel.userMarkers.length}',
-                    style: TextStyle(fontSize: 16),
+                  return Chip(
+                    //chipの色を指定する
+                    backgroundColor: Colors.white,
+                    avatar: Icon(Icons.location_on, color: Colors.orange),
+                    label: Text(
+                      '設置したマーカーの数：${markerListModel.userMarkers.length}',
+                      style: TextStyle(fontSize: 16),
+                    ),
                   );
                 },
               ),
-              Text(
-                  '----------------------------------------------------------'),
               SizedBox(height: 5),
               // マーカー一覧
               Padding(
@@ -283,7 +302,7 @@ class _ProfilePageState extends State<ProfilePage> {
               // マーカーリストを表示
               Expanded(
                 child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30),
+                  padding: EdgeInsets.symmetric(horizontal: 20),
                   child: Consumer<MarkerListModel>(
                     builder: (context, markerListModel, child) {
                       return ListView.builder(
@@ -292,9 +311,17 @@ class _ProfilePageState extends State<ProfilePage> {
                           final marker = markerListModel.userMarkers[index];
                           return Column(
                             children: [
-                              buildInfoItem(
-                                  Icons.location_on, marker.name, marker.id),
-                              SizedBox(height: 20.0),
+                              InfoItem(
+                                icon: Icons.location_on,
+                                info: marker.name,
+                                markerId: marker.id,
+                                latitude: marker.latitude,
+                                longitude: marker.longitude,
+                                riskLevel: marker.risk_level,
+                                radius: marker.radius,
+                                onDelete: () => _removeMarker(marker.id),
+                              ),
+                              SizedBox(height: 5.0),
                             ],
                           );
                         },
@@ -312,21 +339,6 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget buildInfoItem(IconData icon, String info, String markerId) {
-    return Row(
-      children: [
-        Icon(icon, color: Colors.grey[700]),
-        SizedBox(width: 10),
-        Text(info, style: TextStyle(fontSize: 16)),
-        Spacer(),
-        IconButton(
-          icon: Icon(Icons.delete, color: Colors.red),
-          onPressed: () => _removeMarker(markerId), // 削除ボタンを押してマーカーを削除
-        ),
-      ],
     );
   }
 }
