@@ -48,26 +48,34 @@ class _LoginPageState extends State<LoginPage> {
                           width: 100,
                           height: 100,
                         ),
-                        SizedBox(
-                          width: 250.0,
-                          child: TextLiquidFill(
-                            text: 'もくもくハザード',
-                            waveColor: Colors.orange,
-                            boxBackgroundColor: Colors.white,
-                            textStyle: TextStyle(
-                              fontSize: 30,
-                              fontWeight: FontWeight.bold,
-                              //shadows: [
-                              //Shadow(
-                              //blurRadius: 5.0,
-                              //color: Colors.black,
-                              //offset: Offset(2, 2),
-                              //),
-                              //],
-                            ),
-                            boxHeight: 60.0,
+                        Text(
+                          'もくもくハザード',
+                          style: TextStyle(
+                            fontSize: 30,
+                            color: Colors.orange,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
+                        // SizedBox(
+                        //   width: 250.0,
+                        //   child: TextLiquidFill(
+                        //     text: 'もくもくハザード',
+                        //     waveColor: Colors.orange,
+                        //     boxBackgroundColor: Colors.white,
+                        //     textStyle: TextStyle(
+                        //       fontSize: 30,
+                        //       fontWeight: FontWeight.bold,
+                        //       //shadows: [
+                        //       //Shadow(
+                        //       //blurRadius: 5.0,
+                        //       //color: Colors.black,
+                        //       //offset: Offset(2, 2),
+                        //       //),
+                        //       //],
+                        //     ),
+                        //     boxHeight: 60.0,
+                        //   ),
+                        // ),
                       ],
                     ),
                   ],
